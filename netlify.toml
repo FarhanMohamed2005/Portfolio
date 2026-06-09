@@ -1,0 +1,43 @@
+# Netlify Configuration for Portfolio Deployment
+
+[build]
+  # No build command needed - static site
+  publish = "."
+  command = ""
+
+# Redirects and rewrites
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for performance and security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Performance Headers
+    "Cache-Control" = "public, max-age=3600"
+    # Security Headers
+    "X-Content-Type-Options" = "nosniff"
+    "X-Frame-Options" = "SAMEORIGIN"
+    "X-XSS-Protection" = "1; mode=block"
+    "Referrer-Policy" = "strict-origin-when-cross-origin"
+    # Accessibility
+    "Content-Language" = "en-US"
+
+# Cache CSS and JS longer
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    "Cache-Control" = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    "Cache-Control" = "public, max-age=31536000, immutable"
+
+# Contact form submission
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
