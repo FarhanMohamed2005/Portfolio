@@ -271,9 +271,69 @@ function announceToScreenReaders(message) {
   }, 1000);
 }
 
+// Theme Toggle (Light/Dark Mode)
+const themeToggle = document.querySelector('.theme-toggle');
+const html = document.documentElement;
+const THEME_KEY = 'portfolio-theme';
+
+// Initialize theme on page load
+function initTheme() {
+  // Check for saved theme preference or default to system preference
+  let theme = localStorage.getItem(THEME_KEY);
+  
+  if (!theme) {
+    // Use system preference
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  
+  setTheme(theme);
+}
+
+// Set theme
+function setTheme(theme) {
+  if (theme === 'dark') {
+    html.setAttribute('data-theme', 'dark');
+    localStorage.setItem(THEME_KEY, 'dark');
+    if (themeToggle) {
+      themeToggle.textContent = '☀️';
+      themeToggle.setAttribute('aria-label', 'Switch to light mode');
+    }
+  } else {
+    html.removeAttribute('data-theme');
+    localStorage.setItem(THEME_KEY, 'light');
+    if (themeToggle) {
+      themeToggle.textContent = '🌙';
+      themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+    }
+  }
+}
+
+// Toggle theme on button click
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    announceToScreenReaders(`Theme changed to ${newTheme} mode`);
+  });
+}
+
+// Listen for system theme changes
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    const theme = e.matches ? 'dark' : 'light';
+    if (!localStorage.getItem(THEME_KEY)) {
+      setTheme(theme);
+    }
+  });
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Portfolio website loaded successfully');
+  
+  // Initialize theme
+  initTheme();
   
   // Ensure mobile menu button has proper ARIA attributes
   if (mobileMenuBtn) {
